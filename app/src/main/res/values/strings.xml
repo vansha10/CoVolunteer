@@ -1,3 +1,12 @@
 <resources>
     <string name="app_name">Covid19VolunteerApp</string>
+    <string name="welcome_heading">Welcome</string>
+    <string name="welcome_message">Let\'s join hands together to help each other during the Covid-19 crisis.\n
+        \n
+        1. If you or someone you know cannot go out of your home for some reason (elderly / disabled), you can use this app to get stuff delivered.\n
+        \n
+        2. If you want to help, you can use this app to volunteer to deliver the goods to people in need near you.
+    </string>
+    <string name="sign_up">sign up</string>
+    <string name="title_activity_signup">SignupActivity</string>
 </resources>
