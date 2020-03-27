@@ -19,4 +19,5 @@
     <string name="a_volunteer">A volunteer</string>
     <string name="someone_who_needs_help">Someone who needs help</string>
     <string name="are_you_a">Are you a:</string>
+    <string name="title_activity_phone_verification">PhoneVerificationActivity</string>
 </resources>

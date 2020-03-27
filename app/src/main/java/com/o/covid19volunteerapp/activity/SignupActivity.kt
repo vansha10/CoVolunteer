@@ -1,15 +1,17 @@
 package com.o.covid19volunteerapp.activity
 
 import android.app.DatePickerDialog
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.DatePicker
 import android.widget.RadioButton
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
-import com.hbb20.CountryCodePicker
+import com.google.gson.Gson
 import com.o.covid19volunteerapp.R
 import com.o.covid19volunteerapp.databinding.ActivitySignupBinding
+import com.o.covid19volunteerapp.model.User
 import kotlinx.android.synthetic.main.activity_signup.*
 import java.util.*
 import java.util.regex.Pattern
@@ -23,11 +25,10 @@ class SignupActivity : AppCompatActivity() , DatePickerDialog.OnDateSetListener{
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = DataBindingUtil.setContentView(this, com.o.covid19volunteerapp.R.layout.activity_signup)
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_signup)
         setSupportActionBar(toolbar)
 
-        val ccpCountry : CountryCodePicker
-        val datePickerDialog :DatePickerDialog = DatePickerDialog(this, this,
+        val datePickerDialog = DatePickerDialog(this, this,
             2000, 0, 1)
 
         binding.content.dob.setOnClickListener { datePickerDialog.show() }
@@ -84,7 +85,12 @@ class SignupActivity : AppCompatActivity() , DatePickerDialog.OnDateSetListener{
             binding.content.radioHeading.error = "Please select an option"
         }
         if (focusView == null) {
-            // TODO: signup valid
+            val user = User(name, countryCode + phoneNumber, email, dob!!, volunteer!!)
+            val gson = Gson()
+            val intent = Intent(this, PhoneVerificationActivity::class.java)
+            intent.putExtra("user", gson.toJson(user))
+            intent.putExtra("password", password)
+            startActivity(intent)
         } else {
             focusView.requestFocus()
         }
