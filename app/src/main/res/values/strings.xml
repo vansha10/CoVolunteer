@@ -8,5 +8,15 @@
         2. If you want to help, you can use this app to volunteer to deliver the goods to people in need near you.
     </string>
     <string name="sign_up">sign up</string>
-    <string name="title_activity_signup">SignupActivity</string>
+    <string name="title_activity_signup">Signup</string>
+    <string name="title_activity_login">Login</string>
+    <string name="tell_us_about_yourself">Tell us about yourself:</string>
+    <string name="full_name">Full Name</string>
+    <string name="phone_number">Phone Number</string>
+    <string name="password">Password</string>
+    <string name="email_address">Email Address</string>
+    <string name="re_enter_password">Re-enter password</string>
+    <string name="a_volunteer">A volunteer</string>
+    <string name="someone_who_needs_help">Someone who needs help</string>
+    <string name="are_you_a">Are you a:</string>
 </resources>
