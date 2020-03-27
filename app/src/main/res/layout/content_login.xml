@@ -51,6 +51,16 @@
             android:textColor="@color/white"
             android:textSize="24sp" />
 
+        <TextView
+            android:id="@+id/forgot_password"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif-condensed"
+            android:textColor="@color/black"
+            android:textSize="24sp"
+            android:text="Forgot Password?"
+            android:layout_margin="12dp" />
+
         <ProgressBar
             android:id="@+id/progress"
             android:layout_width="wrap_content"

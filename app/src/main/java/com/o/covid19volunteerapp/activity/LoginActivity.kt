@@ -2,6 +2,7 @@ package com.o.covid19volunteerapp.activity
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
@@ -10,6 +11,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import com.google.android.material.snackbar.Snackbar
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.o.covid19volunteerapp.databinding.ActivityLoginBinding
 import com.o.covid19volunteerapp.viewmodel.FirebaseViewmodel
@@ -18,25 +20,30 @@ import kotlinx.android.synthetic.main.activity_login.*
 
 class LoginActivity : AppCompatActivity() {
 
-    lateinit var binding : ActivityLoginBinding
+    lateinit var binding: ActivityLoginBinding
 
-    private lateinit var viewmodel : FirebaseViewmodel
+    private lateinit var viewmodel: FirebaseViewmodel
+
+    private val TAG = "Login"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = DataBindingUtil.setContentView(this, com.o.covid19volunteerapp.R.layout.activity_login)
+        binding =
+            DataBindingUtil.setContentView(this, com.o.covid19volunteerapp.R.layout.activity_login)
         setSupportActionBar(toolbar)
 
         viewmodel = ViewModelProviders.of(this).get(FirebaseViewmodel::class.java)
         viewmodel.init()
 
-        binding.content.loginButton.setOnClickListener{validateInput()}
+        binding.content.loginButton.setOnClickListener { validateInput() }
+
+        binding.content.forgotPassword.setOnClickListener { forgotPassword() }
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
     }
 
     private fun validateInput() {
-        var focusView : View? = null
+        var focusView: View? = null
         if (binding.content.email.text.isEmpty()) {
             focusView = binding.content.email
             binding.content.email.error = "Please enter your email"
@@ -67,12 +74,35 @@ class LoginActivity : AppCompatActivity() {
                 Toast.makeText(this, user.phoneNumber, Toast.LENGTH_SHORT).show()
             } else {
                 hideProgress()
-                Snackbar.make(binding.layout,
-                    "Please check your email and password", Snackbar.LENGTH_LONG).show()
+                Snackbar.make(
+                    binding.layout,
+                    "Please check your email and password", Snackbar.LENGTH_LONG
+                ).show()
             }
         }
 
         viewmodel.loginUser(email, password).observe(this, loginUserObserver)
+    }
+
+    private fun forgotPassword() {
+        hideKeyboard()
+
+        if (binding.content.email.text.isEmpty()) {
+            binding.content.email.requestFocus()
+            binding.content.email.error = "Please enter your email"
+        } else {
+            showProgress()
+            FirebaseAuth.getInstance().sendPasswordResetEmail(binding.content.email.text.toString())
+                .addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        Log.d(TAG, "Email sent.")
+                        hideProgress()
+                        Snackbar.make(binding.layout,
+                            "Password reset email has been sent!", Snackbar.LENGTH_LONG).show()
+                    }
+                }
+        }
+
     }
 
     private fun hideKeyboard() {
