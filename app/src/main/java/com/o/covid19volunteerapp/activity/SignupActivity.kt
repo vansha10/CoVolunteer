@@ -85,7 +85,7 @@ class SignupActivity : AppCompatActivity() , DatePickerDialog.OnDateSetListener{
             binding.content.radioHeading.error = "Please select an option"
         }
         if (focusView == null) {
-            val user = User(name, countryCode + phoneNumber, email, dob!!, volunteer!!)
+            val user = User(name, countryCode + phoneNumber, email, dob!!.timeInMillis, volunteer!!)
             val gson = Gson()
             val intent = Intent(this, PhoneVerificationActivity::class.java)
             intent.putExtra("user", gson.toJson(user))

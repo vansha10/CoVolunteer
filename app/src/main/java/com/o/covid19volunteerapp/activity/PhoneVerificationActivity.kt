@@ -63,6 +63,8 @@ class PhoneVerificationActivity : AppCompatActivity() {
                 //     user action.
                 Log.d(TAG, "onVerificationCompleted:$credential")
 
+                binding.content.codeEditText.setText(credential.smsCode)
+
                 signInWithPhoneAuthCredential(credential)
             }
 
@@ -151,10 +153,9 @@ class PhoneVerificationActivity : AppCompatActivity() {
                             this,
                             "Success.",
                             Toast.LENGTH_LONG).show()
-                        //TODO: upload data
-                        uploadUserData(this.user)
+
+                        uploadUserData(this.user, user!!.uid)
                     } else {
-                        //TODO: handle email exists?
                         Toast.makeText(
                             this,
                             "Something went wrong, try again later please.",
@@ -165,8 +166,10 @@ class PhoneVerificationActivity : AppCompatActivity() {
                 })
     }
 
-    private fun uploadUserData(user: User) {
+    private fun uploadUserData(user: User, uid : String) {
+        viewmodel.addUser(user, uid)
 
+        //TODO: go to next activity
     }
 
 }

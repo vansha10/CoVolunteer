@@ -8,13 +8,33 @@
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         tools:context=".activity.PhoneVerificationActivity"
-        tools:showIn="@layout/activity_phone_verification">
+        tools:showIn="@layout/activity_phone_verification"
+        android:layout_margin="16dp">
 
-        <EditText
-            android:id="@+id/code_edit_text"
+        <TextView
+            android:id="@+id/radio_heading"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:fontFamily="sans-serif-condensed-light"
+            android:textSize="24sp"
+            android:textColor="@color/black"
+            android:text="@string/please_enter_the_verification_code_recieved_on_your_provided_phone_number"
+            android:textStyle="bold"
+            android:layout_marginTop="8dp"/>
+
+        <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_centerInParent="true" />
+            android:layout_centerInParent="true">
+
+            <EditText
+                android:id="@+id/code_edit_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:hint="@string/verification_code"
+                android:inputType="number"/>
+        </com.google.android.material.textfield.TextInputLayout>
 
     </RelativeLayout>
 </layout>

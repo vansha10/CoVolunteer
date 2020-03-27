@@ -39,8 +39,10 @@ dependencies {
     implementation 'com.hbb20:ccp:2.3.8'
     // Firebase SDK for Google Analytics
     implementation 'com.google.firebase:firebase-analytics:17.2.3'
-    // Firebase authentication
+    // Firebase Authentication
     implementation 'com.google.firebase:firebase-auth:19.3.0'
+    // Firebase Firestore
+    implementation 'com.google.firebase:firebase-firestore-ktx:21.4.1'
     // GSON
     implementation 'com.google.code.gson:gson:2.8.6'
     // Lifecycle components (viewmodel, livedata)
