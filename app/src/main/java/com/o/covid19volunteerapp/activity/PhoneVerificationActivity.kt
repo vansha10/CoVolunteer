@@ -2,11 +2,13 @@ package com.o.covid19volunteerapp.activity
 
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProviders
 import com.google.android.gms.tasks.OnCompleteListener
+import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.FirebaseException
 import com.google.firebase.FirebaseTooManyRequestsException
 import com.google.firebase.auth.*
@@ -122,6 +124,8 @@ class PhoneVerificationActivity : AppCompatActivity() {
 
     private fun signInWithPhoneAuthCredential(credential: PhoneAuthCredential) {
         //TODO: move to repository
+
+        showProgress()
         val auth = FirebaseAuth.getInstance()
         auth.signInWithCredential(credential)
             .addOnCompleteListener(this) {
@@ -130,10 +134,9 @@ class PhoneVerificationActivity : AppCompatActivity() {
                     val newUser = it.result?.user
                     linkEmailAndPhoneAuth(user.email, password!!)
                 } else {
-                    Toast.makeText(
-                        this,
-                        "Something went wrong, try again later please.",
-                        Toast.LENGTH_LONG).show()
+                    Snackbar.make(binding.layout,
+                        "Something went wrong. Please try again.", Snackbar.LENGTH_LONG).show()
+                    hideProgress()
                 }
             }
     }
@@ -156,13 +159,10 @@ class PhoneVerificationActivity : AppCompatActivity() {
 
                         uploadUserData(this.user, user!!.uid)
                     } else {
-                        Toast.makeText(
-                            this,
-                            "Something went wrong, try again later please.",
-                            Toast.LENGTH_LONG).show()
+                        Snackbar.make(binding.layout,
+                            "Something went wrong. Please try again.", Snackbar.LENGTH_LONG).show()
+                        hideProgress()
                     }
-
-                    // ...
                 })
     }
 
@@ -170,6 +170,18 @@ class PhoneVerificationActivity : AppCompatActivity() {
         viewmodel.addUser(user, uid)
 
         //TODO: go to next activity
+    }
+
+    fun showProgress() {
+        binding.content.codeEditText.isClickable = false
+        binding.fab.visibility = View.INVISIBLE
+        binding.content.progress.visibility = View.VISIBLE
+    }
+
+    fun hideProgress() {
+        binding.content.codeEditText.isClickable = true
+        binding.fab.visibility = View.VISIBLE
+        binding.content.progress.visibility = View.INVISIBLE
     }
 
 }
