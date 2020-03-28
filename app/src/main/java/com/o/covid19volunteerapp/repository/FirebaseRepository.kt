@@ -13,6 +13,7 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.ktx.Firebase
 import com.o.covid19volunteerapp.activity.LoginActivity
+import com.o.covid19volunteerapp.model.Request
 import com.o.covid19volunteerapp.model.User
 import java.util.concurrent.TimeUnit
 
@@ -94,4 +95,12 @@ class FirebaseRepository {
         return userData
     }
 
+    fun addRequest(request : Request) {
+        db.collection("requests")
+            .add(request)
+            .addOnSuccessListener { Log.d(TAG, "request added") }
+            .addOnFailureListener {
+                Log.d(TAG, "error adding request", it)
+            }
+    }
 }

@@ -25,4 +25,6 @@
     <string name="log_in">log in</string>
     <string name="title_activity_main">CoVolunteer</string>
     <string name="log_out">Log Out</string>
+    <string name="title_activity_add_request">Add Request</string>
+    <string name="write_your_request_here">Write your request here</string>
 </resources>

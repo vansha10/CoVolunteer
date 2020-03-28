@@ -10,9 +10,19 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
+            android:name=".activity.AddRequestActivity"
+            android:label="@string/title_activity_add_request"
+            android:parentActivityName=".activity.MainActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.o.covid19volunteerapp.activity.MainActivity" />
+        </activity>
+        <activity
             android:name=".activity.MainActivity"
             android:label="@string/title_activity_main"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar"
+            android:launchMode="singleTop"/>
         <activity
             android:name=".activity.PhoneVerificationActivity"
             android:label="@string/title_activity_phone_verification"
@@ -35,7 +45,8 @@
             android:name=".activity.SignupActivity"
             android:label="@string/title_activity_signup"
             android:parentActivityName=".activity.WelcomeActivity"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/AppTheme.NoActionBar"
+            android:launchMode="singleTop">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.o.covid19volunteerapp.activity.WelcomeActivity" />

@@ -24,8 +24,7 @@ import kotlinx.android.synthetic.main.activity_main_volunteer.*
 import androidx.core.app.ComponentActivity.ExtraData
 import androidx.core.content.ContextCompat.getSystemService
 import android.icu.lang.UCharacter.GraphemeClusterBreak.T
-
-
+import com.google.gson.Gson
 
 
 class MainActivity : AppCompatActivity() {
@@ -61,6 +60,12 @@ class MainActivity : AppCompatActivity() {
                     bindingNeed = DataBindingUtil.setContentView(this,
                         com.o.covid19volunteerapp.R.layout.activity_main_need)
                     setSupportActionBar(toolbar)
+                    bindingNeed.fab.setOnClickListener {
+                        val intent = Intent(this, AddRequestActivity::class.java)
+                        val gson = Gson()
+                        intent.putExtra("user", gson.toJson(this.user))
+                        startActivity(intent)
+                    }
                 }
             } else {
                 Toast.makeText(this, "Something went wrong", Toast.LENGTH_SHORT).show()

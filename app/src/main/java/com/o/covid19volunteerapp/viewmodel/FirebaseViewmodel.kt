@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.PhoneAuthProvider
+import com.o.covid19volunteerapp.model.Request
 import com.o.covid19volunteerapp.model.User
 import com.o.covid19volunteerapp.repository.FirebaseRepository
 
@@ -30,5 +31,9 @@ class FirebaseViewmodel : ViewModel() {
 
     fun getUserData(uid : String) : MutableLiveData<User>{
         return firebaseRepository!!.getUserData(uid)
+    }
+
+    fun addRequest(request: Request) {
+        firebaseRepository!!.addRequest(request)
     }
 }
