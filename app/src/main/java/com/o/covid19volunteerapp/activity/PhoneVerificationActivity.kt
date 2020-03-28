@@ -1,5 +1,6 @@
 package com.o.covid19volunteerapp.activity
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -169,7 +170,9 @@ class PhoneVerificationActivity : AppCompatActivity() {
     private fun uploadUserData(user: User, uid : String) {
         viewmodel.addUser(user, uid)
 
-        //TODO: go to next activity
+        val intent = Intent(this, MainActivity::class.java)
+        intent.putExtra("uid", uid)
+        startActivity(intent)
     }
 
     fun showProgress() {

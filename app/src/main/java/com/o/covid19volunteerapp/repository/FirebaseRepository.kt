@@ -2,6 +2,7 @@ package com.o.covid19volunteerapp.repository
 
 import android.app.Activity
 import android.app.Application
+import android.nfc.Tag
 import android.util.Log
 import android.widget.Toast
 import androidx.lifecycle.MutableLiveData
@@ -9,6 +10,7 @@ import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.*
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.ktx.Firebase
 import com.o.covid19volunteerapp.activity.LoginActivity
 import com.o.covid19volunteerapp.model.User
@@ -69,6 +71,27 @@ class FirebaseRepository {
             .set(user)
             .addOnSuccessListener {Log.d(TAG, "user added") }
             .addOnFailureListener { exception ->   Log.w(TAG, "Error adding document", exception)}
+    }
+
+    fun getUserData(uid : String) : MutableLiveData<User> {
+        val userData = MutableLiveData<User>()
+
+        val docRef = db.collection("users").document(uid)
+
+        docRef.get().addOnSuccessListener { documentSnapshot ->
+            if (documentSnapshot != null) {
+                val user = documentSnapshot.toObject<User>()
+                userData.value = user
+            } else {
+                Log.d(TAG, "User does not exist")
+                userData.value = null
+            }
+        }.addOnFailureListener { exception ->
+            Log.d(TAG, "get failed with ", exception)
+            userData.value = null
+        }
+
+        return userData
     }
 
 }

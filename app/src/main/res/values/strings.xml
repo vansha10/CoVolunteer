@@ -23,4 +23,6 @@
     <string name="verification_code">Verification Code</string>
     <string name="please_enter_the_verification_code_recieved_on_your_provided_phone_number">Please enter the verification code recieved on your provided phone number:</string>
     <string name="log_in">log in</string>
+    <string name="title_activity_main">CoVolunteer</string>
+    <string name="log_out">Log Out</string>
 </resources>

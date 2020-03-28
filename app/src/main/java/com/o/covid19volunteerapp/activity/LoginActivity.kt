@@ -1,6 +1,7 @@
 package com.o.covid19volunteerapp.activity
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -28,8 +29,7 @@ class LoginActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding =
-            DataBindingUtil.setContentView(this, com.o.covid19volunteerapp.R.layout.activity_login)
+        binding = DataBindingUtil.setContentView(this, com.o.covid19volunteerapp.R.layout.activity_login)
         setSupportActionBar(toolbar)
 
         viewmodel = ViewModelProviders.of(this).get(FirebaseViewmodel::class.java)
@@ -71,7 +71,10 @@ class LoginActivity : AppCompatActivity() {
 
         val loginUserObserver = Observer<FirebaseUser> { user ->
             if (user != null) {
-                Toast.makeText(this, user.phoneNumber, Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Logging in", Toast.LENGTH_SHORT).show()
+                val intent = Intent(this, MainActivity::class.java)
+                intent.putExtra("uid", user.uid)
+                startActivity(intent)
             } else {
                 hideProgress()
                 Snackbar.make(

@@ -2,5 +2,6 @@ package com.o.covid19volunteerapp.model
 
 import java.util.*
 
-data class User (val name : String, val phone : String, val email :String, val dob : Long, val isVolunteer : Boolean) {
+data class User (var name : String, var phone : String, var email :String, var dob : Long, var isVolunteer : Boolean) {
+    constructor() : this("", "", "", 0, true)
 }

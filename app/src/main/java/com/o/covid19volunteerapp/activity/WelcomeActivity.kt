@@ -4,6 +4,7 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.databinding.DataBindingUtil
+import com.google.firebase.auth.FirebaseAuth
 import com.o.covid19volunteerapp.R
 import com.o.covid19volunteerapp.databinding.ActivityWelcomeBinding
 
@@ -15,7 +16,18 @@ class WelcomeActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_welcome)
 
+        checkUserSignedIn()
+
         initialiseButtons()
+    }
+
+    private fun checkUserSignedIn() {
+        val user = FirebaseAuth.getInstance().currentUser
+        if (user != null) {
+            val intent = Intent(this, MainActivity::class.java)
+            intent.putExtra("uid", user.uid)
+            startActivity(intent)
+        }
     }
 
     private fun initialiseButtons() {
