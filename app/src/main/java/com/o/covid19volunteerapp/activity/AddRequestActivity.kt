@@ -2,8 +2,11 @@ package com.o.covid19volunteerapp.activity
 
 import android.os.Bundle
 import android.util.Log
+import android.view.View
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import com.google.android.gms.common.api.Status
 import com.google.android.libraries.places.api.Places
@@ -17,6 +20,7 @@ import com.o.covid19volunteerapp.BuildConfig
 import com.o.covid19volunteerapp.databinding.ActivityAddRequestBinding
 import com.o.covid19volunteerapp.model.Request
 import com.o.covid19volunteerapp.model.User
+import com.o.covid19volunteerapp.model.UserRequest
 import com.o.covid19volunteerapp.viewmodel.FirebaseViewmodel
 import kotlinx.android.synthetic.main.activity_add_request.*
 import java.util.*
@@ -81,6 +85,8 @@ class AddRequestActivity : AppCompatActivity() {
     }
 
     private fun sendRequest() {
+        showProgress()
+
        val requestText = binding.content.request.text.toString()
 
         if (requestText.isEmpty()) {
@@ -95,12 +101,37 @@ class AddRequestActivity : AppCompatActivity() {
         } else {
             val request = Request(requestText, user.phone, user.name,
                 FirebaseAuth.getInstance().currentUser!!.uid, locality!!)
-            viewmodel.addRequest(request, FirebaseAuth.getInstance().currentUser!!.uid)
-            finish()
+            uploadRequest(request, FirebaseAuth.getInstance().currentUser!!.uid)
         }
+    }
+
+    private fun uploadRequest(request: Request, uid: String) {
+        val requestObserver = Observer<Boolean> { isSuccessful ->
+            if (isSuccessful) {
+                Toast.makeText(this, "Request Added", Toast.LENGTH_LONG).show()
+                finish()
+            } else {
+                hideProgress()
+                Snackbar.make(binding.layout,
+                    "Something went wrong. Please try again.",
+                    Snackbar.LENGTH_LONG).show()
+            }
+        }
+
+        viewmodel.addRequest(request, uid).observe(this, requestObserver)
     }
 
     override fun onBackPressed() {
         finish()
+    }
+
+    fun showProgress() {
+        binding.content.layout.visibility = View.GONE
+        binding.content.progress.visibility = View.VISIBLE
+    }
+
+    fun hideProgress() {
+        binding.content.layout.visibility = View.VISIBLE
+        binding.content.progress.visibility = View.GONE
     }
 }

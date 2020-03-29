@@ -1,19 +1,14 @@
 package com.o.covid19volunteerapp.repository
 
 import android.app.Activity
-import android.app.Application
-import android.nfc.Tag
 import android.util.Log
-import android.widget.Toast
 import androidx.lifecycle.MutableLiveData
-import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.*
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.ktx.Firebase
-import com.o.covid19volunteerapp.activity.LoginActivity
 import com.o.covid19volunteerapp.model.Request
 import com.o.covid19volunteerapp.model.User
 import com.o.covid19volunteerapp.model.UserRequest
@@ -81,6 +76,8 @@ class FirebaseRepository {
 
         val docRef = db.collection("users").document(uid)
 
+
+
         docRef.get().addOnSuccessListener { documentSnapshot ->
             if (documentSnapshot != null) {
                 val user = documentSnapshot.toObject<User>()
@@ -97,23 +94,60 @@ class FirebaseRepository {
         return userData
     }
 
-    fun addRequest(request : Request, uid : String) {
+    fun listenUserDataChange(uid: String) : MutableLiveData<User> {
+        val userData = MutableLiveData<User>()
+
+        val docRef = db.collection("users").document(uid)
+
+        docRef.addSnapshotListener { snapshot, e ->
+            if (e != null) {
+                Log.d(TAG, "get failed with ", e)
+                userData.value = null
+                return@addSnapshotListener
+            }
+
+            if (snapshot != null && snapshot.exists()) {
+                val user = snapshot.toObject<User>()
+                userData.value = user
+                Log.d(TAG, "Current data: ${snapshot.data}")
+            } else {
+                Log.d(TAG, "User does not exist")
+                userData.value = null
+            }
+        }
+        return userData
+    }
+
+    fun addRequest(request : Request, uid : String) : MutableLiveData<Boolean> {
+        var isSuccessful = MutableLiveData<Boolean>()
+
         db.collection("requests")
             .add(request)
             .addOnSuccessListener {
-                addUserRequest(request, uid, it.id)
-                Log.d(TAG, "request added") }
+                isSuccessful.value = addUserRequest(request, uid, it.id).value
+                Log.d(TAG, "request added")
+                }
             .addOnFailureListener {
                 Log.d(TAG, "error adding request", it)
+                isSuccessful.value = false
             }
+        return isSuccessful
     }
 
-    private fun addUserRequest(request: Request, uid : String, requestId : String) {
+    private fun addUserRequest(request: Request, uid : String, requestId : String) : MutableLiveData<Boolean>{
+        val isSuccessful = MutableLiveData<Boolean>()
+
         val userRequest = UserRequest()
         userRequest.setRequest(request)
         userRequest.requestId = requestId
         db.collection("users")
             .document(uid)
             .update("requests", FieldValue.arrayUnion(userRequest))
+            .addOnSuccessListener { isSuccessful.value = true }
+            .addOnFailureListener { exception ->
+                Log.d(TAG, "error adding request", exception)
+                isSuccessful.value = false
+            }
+        return isSuccessful
     }
 }

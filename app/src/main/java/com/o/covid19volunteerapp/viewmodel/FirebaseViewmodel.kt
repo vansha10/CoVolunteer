@@ -33,7 +33,11 @@ class FirebaseViewmodel : ViewModel() {
         return firebaseRepository!!.getUserData(uid)
     }
 
-    fun addRequest(request: Request, uid : String) {
-        firebaseRepository!!.addRequest(request, uid)
+    fun listenUserDataChange(uid : String) : MutableLiveData<User> {
+        return firebaseRepository!!.listenUserDataChange(uid)
+    }
+
+    fun addRequest(request: Request, uid : String) : MutableLiveData<Boolean> {
+        return firebaseRepository!!.addRequest(request, uid)
     }
 }

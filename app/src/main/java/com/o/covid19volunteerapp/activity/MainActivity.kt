@@ -8,23 +8,20 @@ import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
+import androidx.databinding.Observable
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
-import com.google.android.material.snackbar.Snackbar
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.auth.FirebaseAuth
-import com.o.covid19volunteerapp.databinding.ActivityMainLoadingBinding
+import com.google.gson.Gson
+import com.o.covid19volunteerapp.adapter.NeedRecyclerViewAdapter
 import com.o.covid19volunteerapp.databinding.ActivityMainNeedBinding
 import com.o.covid19volunteerapp.databinding.ActivityMainVolunteerBinding
 import com.o.covid19volunteerapp.model.User
+import com.o.covid19volunteerapp.model.UserRequest
 import com.o.covid19volunteerapp.viewmodel.FirebaseViewmodel
-import kotlinx.android.synthetic.main.activity_main_loading.*
-import kotlinx.android.synthetic.main.activity_main_loading.toolbar
 import kotlinx.android.synthetic.main.activity_main_need.*
-import kotlinx.android.synthetic.main.activity_main_volunteer.*
-import androidx.core.app.ComponentActivity.ExtraData
-import androidx.core.content.ContextCompat.getSystemService
-import android.icu.lang.UCharacter.GraphemeClusterBreak.T
-import com.google.gson.Gson
 
 
 class MainActivity : AppCompatActivity() {
@@ -33,17 +30,16 @@ class MainActivity : AppCompatActivity() {
     lateinit var bindingNeed : ActivityMainNeedBinding
     lateinit var viewmodel : FirebaseViewmodel
     var user : User? = null
+    lateinit var recyclerViewAdapter : NeedRecyclerViewAdapter
+    lateinit var userRequestsList : MutableList<UserRequest>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        //bindingLoading = DataBindingUtil.setContentView(this, com.o.covid19volunteerapp.R.layout.activity_main_loading)
 
         viewmodel = ViewModelProviders.of(this).get(FirebaseViewmodel::class.java)
         viewmodel.init()
 
         getUser()
-
-        setSupportActionBar(toolbar)
     }
 
     private fun getUser() {
@@ -53,6 +49,7 @@ class MainActivity : AppCompatActivity() {
         if (user!!.isVolunteer) {
             bindingVolunteer = DataBindingUtil.setContentView(this,
                 com.o.covid19volunteerapp.R.layout.activity_main_volunteer)
+            setSupportActionBar(toolbar)
         } else {
             bindingNeed = DataBindingUtil.setContentView(this,
                 com.o.covid19volunteerapp.R.layout.activity_main_need)
@@ -63,7 +60,12 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun updateNeedUI() {
-        Toast.makeText(this, user!!.requests.size.toString(), Toast.LENGTH_SHORT).show()
+        userRequestsList = user!!.requests as MutableList<UserRequest>
+        recyclerViewAdapter = NeedRecyclerViewAdapter(userRequestsList)
+        recycler_view.apply {
+            layoutManager = LinearLayoutManager(context)
+            adapter = recyclerViewAdapter
+        }
     }
 
     private fun addRequest() {
@@ -72,6 +74,7 @@ class MainActivity : AppCompatActivity() {
         intent.putExtra("user", gson.toJson(this.user))
         startActivity(intent)
     }
+
 
     private fun hideProgress() {
         if (user != null) {
@@ -116,5 +119,20 @@ class MainActivity : AppCompatActivity() {
         a.addCategory(Intent.CATEGORY_HOME)
         a.flags = Intent.FLAG_ACTIVITY_NEW_TASK
         startActivity(a)
+    }
+
+    override fun onStart() {
+        super.onStart()
+        listenUserDataChange()
+    }
+
+    private fun listenUserDataChange() {
+        val userDataChangeObserver = Observer<User> {user ->
+            if (user != null) {
+                recyclerViewAdapter.updateList(user.requests as MutableList<UserRequest>)
+            }
+        }
+        viewmodel.listenUserDataChange(FirebaseAuth.getInstance().currentUser!!.uid)
+            .observe(this, userDataChangeObserver)
     }
 }
