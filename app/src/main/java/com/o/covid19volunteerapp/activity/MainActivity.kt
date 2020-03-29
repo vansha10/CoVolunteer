@@ -47,32 +47,25 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun getUser() {
-        val uid = intent.getStringExtra("uid")
+        val gson = Gson()
+        user = gson.fromJson(intent.getStringExtra("user"), User::class.java)
 
-        val loginUserObserver = Observer<User> { user ->
-            if (user != null) {
-                this.user = user
-                if (user.isVolunteer) {
-                    bindingVolunteer = DataBindingUtil.setContentView(this,
-                        com.o.covid19volunteerapp.R.layout.activity_main_volunteer)
-                    setSupportActionBar(toolbar)
-                } else {
-                    bindingNeed = DataBindingUtil.setContentView(this,
-                        com.o.covid19volunteerapp.R.layout.activity_main_need)
-                    setSupportActionBar(toolbar)
-                    bindingNeed.fab.setOnClickListener {
-                        val intent = Intent(this, AddRequestActivity::class.java)
-                        val gson = Gson()
-                        intent.putExtra("user", gson.toJson(this.user))
-                        startActivity(intent)
-                    }
-                }
-            } else {
-                Toast.makeText(this, "Something went wrong", Toast.LENGTH_SHORT).show()
-            }
+        if (user!!.isVolunteer) {
+            bindingVolunteer = DataBindingUtil.setContentView(this,
+                com.o.covid19volunteerapp.R.layout.activity_main_volunteer)
+        } else {
+            bindingNeed = DataBindingUtil.setContentView(this,
+                com.o.covid19volunteerapp.R.layout.activity_main_need)
+            setSupportActionBar(toolbar)
+            bindingNeed.fab.setOnClickListener { addRequest() }
         }
+    }
 
-        viewmodel.getUserData(uid!!).observe(this, loginUserObserver)
+    private fun addRequest() {
+        val intent = Intent(this, AddRequestActivity::class.java)
+        val gson = Gson()
+        intent.putExtra("user", gson.toJson(this.user))
+        startActivity(intent)
     }
 
     private fun hideProgress() {

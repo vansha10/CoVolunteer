@@ -16,7 +16,7 @@ class WelcomeActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_welcome)
 
-        checkUserSignedIn()
+        //checkUserSignedIn()
 
         initialiseButtons()
     }
@@ -39,5 +39,12 @@ class WelcomeActivity : AppCompatActivity() {
             intent = Intent(this, SignupActivity::class.java)
             startActivity(intent)
         }
+    }
+
+    override fun onBackPressed() {
+        val a = Intent(Intent.ACTION_MAIN)
+        a.addCategory(Intent.CATEGORY_HOME)
+        a.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+        startActivity(a)
     }
 }

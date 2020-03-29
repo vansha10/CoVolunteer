@@ -170,8 +170,13 @@ class PhoneVerificationActivity : AppCompatActivity() {
     private fun uploadUserData(user: User, uid : String) {
         viewmodel.addUser(user, uid)
 
+        startMainActivity(user)
+    }
+
+    private fun startMainActivity(user: User?) {
         val intent = Intent(this, MainActivity::class.java)
-        intent.putExtra("uid", uid)
+        val gson = Gson()
+        intent.putExtra("user", gson.toJson(user))
         startActivity(intent)
     }
 

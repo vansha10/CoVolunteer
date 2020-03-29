@@ -14,7 +14,9 @@ import androidx.lifecycle.ViewModelProviders
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
+import com.google.gson.Gson
 import com.o.covid19volunteerapp.databinding.ActivityLoginBinding
+import com.o.covid19volunteerapp.model.User
 import com.o.covid19volunteerapp.viewmodel.FirebaseViewmodel
 import kotlinx.android.synthetic.main.activity_login.*
 
@@ -71,10 +73,7 @@ class LoginActivity : AppCompatActivity() {
 
         val loginUserObserver = Observer<FirebaseUser> { user ->
             if (user != null) {
-                Toast.makeText(this, "Logging in", Toast.LENGTH_SHORT).show()
-                val intent = Intent(this, MainActivity::class.java)
-                intent.putExtra("uid", user.uid)
-                startActivity(intent)
+                getUserData(user)
             } else {
                 hideProgress()
                 Snackbar.make(
@@ -85,6 +84,28 @@ class LoginActivity : AppCompatActivity() {
         }
 
         viewmodel.loginUser(email, password).observe(this, loginUserObserver)
+    }
+
+    private fun getUserData(fireBaseUser: FirebaseUser) {
+        val userDataObserver = Observer<User> { user ->
+            if (user != null) {
+                startMainActivity(user)
+            } else {
+                hideProgress()
+                Snackbar.make(
+                    binding.layout,
+                    "Something went wrong. Please try again.", Snackbar.LENGTH_LONG
+                ).show()
+            }
+        }
+        viewmodel.getUserData(fireBaseUser.uid).observe(this, userDataObserver)
+    }
+
+    private fun startMainActivity(user: User) {
+        val intent = Intent(this, MainActivity::class.java)
+        val gson = Gson()
+        intent.putExtra("user", gson.toJson(user))
+        startActivity(intent)
     }
 
     private fun forgotPassword() {
