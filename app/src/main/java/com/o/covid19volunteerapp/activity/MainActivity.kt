@@ -58,7 +58,12 @@ class MainActivity : AppCompatActivity() {
                 com.o.covid19volunteerapp.R.layout.activity_main_need)
             setSupportActionBar(toolbar)
             bindingNeed.fab.setOnClickListener { addRequest() }
+            updateNeedUI()
         }
+    }
+
+    private fun updateNeedUI() {
+        Toast.makeText(this, user!!.requests.size.toString(), Toast.LENGTH_SHORT).show()
     }
 
     private fun addRequest() {

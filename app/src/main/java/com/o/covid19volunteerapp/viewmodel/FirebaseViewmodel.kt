@@ -33,7 +33,7 @@ class FirebaseViewmodel : ViewModel() {
         return firebaseRepository!!.getUserData(uid)
     }
 
-    fun addRequest(request: Request) {
-        firebaseRepository!!.addRequest(request)
+    fun addRequest(request: Request, uid : String) {
+        firebaseRepository!!.addRequest(request, uid)
     }
 }

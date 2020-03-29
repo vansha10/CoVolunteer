@@ -8,6 +8,7 @@ import android.widget.Toast
 import androidx.lifecycle.MutableLiveData
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.*
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.ktx.toObject
@@ -15,6 +16,7 @@ import com.google.firebase.ktx.Firebase
 import com.o.covid19volunteerapp.activity.LoginActivity
 import com.o.covid19volunteerapp.model.Request
 import com.o.covid19volunteerapp.model.User
+import com.o.covid19volunteerapp.model.UserRequest
 import java.util.concurrent.TimeUnit
 
 class FirebaseRepository {
@@ -95,12 +97,23 @@ class FirebaseRepository {
         return userData
     }
 
-    fun addRequest(request : Request) {
+    fun addRequest(request : Request, uid : String) {
         db.collection("requests")
             .add(request)
-            .addOnSuccessListener { Log.d(TAG, "request added") }
+            .addOnSuccessListener {
+                addUserRequest(request, uid, it.id)
+                Log.d(TAG, "request added") }
             .addOnFailureListener {
                 Log.d(TAG, "error adding request", it)
             }
+    }
+
+    private fun addUserRequest(request: Request, uid : String, requestId : String) {
+        val userRequest = UserRequest()
+        userRequest.setRequest(request)
+        userRequest.requestId = requestId
+        db.collection("users")
+            .document(uid)
+            .update("requests", FieldValue.arrayUnion(userRequest))
     }
 }

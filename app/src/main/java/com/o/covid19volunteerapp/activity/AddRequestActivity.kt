@@ -11,6 +11,7 @@ import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener
 import com.google.android.material.snackbar.Snackbar
+import com.google.firebase.auth.FirebaseAuth
 import com.google.gson.Gson
 import com.o.covid19volunteerapp.BuildConfig
 import com.o.covid19volunteerapp.databinding.ActivityAddRequestBinding
@@ -92,8 +93,9 @@ class AddRequestActivity : AppCompatActivity() {
                 "Please enter your locality",
                 Snackbar.LENGTH_LONG).show()
         } else {
-            val request = Request(requestText, user.phone, user.name, locality!!)
-            viewmodel.addRequest(request)
+            val request = Request(requestText, user.phone, user.name,
+                FirebaseAuth.getInstance().currentUser!!.uid, locality!!)
+            viewmodel.addRequest(request, FirebaseAuth.getInstance().currentUser!!.uid)
             finish()
         }
     }
