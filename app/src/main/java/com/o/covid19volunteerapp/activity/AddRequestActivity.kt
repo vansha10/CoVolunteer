@@ -10,7 +10,9 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import com.google.android.gms.common.api.Status
 import com.google.android.libraries.places.api.Places
+import com.google.android.libraries.places.api.model.AddressComponent
 import com.google.android.libraries.places.api.model.Place
+import com.google.android.libraries.places.api.model.TypeFilter
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener
 import com.google.android.material.snackbar.Snackbar
@@ -18,12 +20,11 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.gson.Gson
 import com.o.covid19volunteerapp.BuildConfig
 import com.o.covid19volunteerapp.databinding.ActivityAddRequestBinding
+import com.o.covid19volunteerapp.model.Locality
 import com.o.covid19volunteerapp.model.Request
 import com.o.covid19volunteerapp.model.User
-import com.o.covid19volunteerapp.model.UserRequest
 import com.o.covid19volunteerapp.viewmodel.FirebaseViewmodel
 import kotlinx.android.synthetic.main.activity_add_request.*
-import java.util.*
 
 
 class AddRequestActivity : AppCompatActivity() {
@@ -33,7 +34,7 @@ class AddRequestActivity : AppCompatActivity() {
     lateinit var user : User
     val apiKey : String = BuildConfig.GOOGLE_MAP_KEY
     val TAG = "AddRequest"
-    var locality : String? = null
+    var locality: Locality? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -65,14 +66,31 @@ class AddRequestActivity : AppCompatActivity() {
                     as AutocompleteSupportFragment?
 
         // Specify the types of place data to return.
-        autocompleteFragment!!.setPlaceFields(listOf(Place.Field.ADDRESS, Place.Field.ID))
+        autocompleteFragment!!.setTypeFilter(TypeFilter.REGIONS)
+        autocompleteFragment.setPlaceFields(listOf(Place.Field.ADDRESS_COMPONENTS, Place.Field.ID))
 
         // Set up a PlaceSelectionListener to handle the response.
         autocompleteFragment.setOnPlaceSelectedListener(object : PlaceSelectionListener {
             override fun onPlaceSelected(place: Place) {
-                binding.content.selectedLocality.text = "You have selected: ${place.address}"
-                locality = place.address
-                Log.i(TAG, "Place: " + place.address)
+                locality = null
+                var postalCode : String? = null
+                var country : String? = null
+                val addressComponents = place.addressComponents!!.asList()
+                for (a in addressComponents) {
+                    if (a.types.contains("postal_code")) {
+                        postalCode = a.name
+                    }
+                    if (a.types.contains("country")) {
+                        country = a.name
+                    }
+                }
+                if (postalCode == null || country == null) {
+                    binding.content.selectedLocality.text = "Please enter a valid Postal Code"
+                } else {
+                    binding.content.selectedLocality.text = "You have selected: ${postalCode}"
+                    locality = Locality(postalCode, country)
+                    Log.i(TAG, "Place: $postalCode")
+                }
             }
             override fun onError(status: Status) {
                 Snackbar.make(binding.layout,
@@ -85,8 +103,6 @@ class AddRequestActivity : AppCompatActivity() {
     }
 
     private fun sendRequest() {
-        showProgress()
-
        val requestText = binding.content.request.text.toString()
 
         if (requestText.isEmpty()) {
@@ -96,9 +112,10 @@ class AddRequestActivity : AppCompatActivity() {
         }
         else if (locality == null) {
             Snackbar.make(binding.layout,
-                "Please enter your locality",
+                "Please enter your postal code",
                 Snackbar.LENGTH_LONG).show()
         } else {
+            showProgress()
             val request = Request(requestText, user.phone, user.name,
                 FirebaseAuth.getInstance().currentUser!!.uid, locality!!)
             uploadRequest(request, FirebaseAuth.getInstance().currentUser!!.uid)
@@ -107,14 +124,18 @@ class AddRequestActivity : AppCompatActivity() {
 
     private fun uploadRequest(request: Request, uid: String) {
         val requestObserver = Observer<Boolean> { isSuccessful ->
-            if (isSuccessful) {
-                Toast.makeText(this, "Request Added", Toast.LENGTH_LONG).show()
-                finish()
-            } else {
-                hideProgress()
-                Snackbar.make(binding.layout,
-                    "Something went wrong. Please try again.",
-                    Snackbar.LENGTH_LONG).show()
+            if (isSuccessful != null) {
+                if (isSuccessful) {
+                    Toast.makeText(this, "Request Added", Toast.LENGTH_LONG).show()
+                    finish()
+                } else {
+                    hideProgress()
+                    Snackbar.make(
+                        binding.layout,
+                        "Something went wrong. Please try again.",
+                        Snackbar.LENGTH_LONG
+                    ).show()
+                }
             }
         }
 

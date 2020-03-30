@@ -31,7 +31,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:fontFamily="sans-serif-condensed-light"
-                android:text="@string/enter_your_locality_area"
+                android:text="Enter your postal code (to find people in your area): "
                 android:textColor="@color/black"
                 android:textSize="20sp"
                 android:textStyle="bold" />

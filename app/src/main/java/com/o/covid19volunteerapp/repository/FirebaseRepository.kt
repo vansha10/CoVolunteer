@@ -6,9 +6,11 @@ import androidx.lifecycle.MutableLiveData
 import com.google.firebase.auth.*
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.ktx.Firebase
+import com.o.covid19volunteerapp.model.Locality
 import com.o.covid19volunteerapp.model.Request
 import com.o.covid19volunteerapp.model.User
 import com.o.covid19volunteerapp.model.UserRequest
@@ -124,7 +126,8 @@ class FirebaseRepository {
         db.collection("requests")
             .add(request)
             .addOnSuccessListener {
-                isSuccessful.value = addUserRequest(request, uid, it.id).value
+                isSuccessful.value = true
+                addUserRequest(request, uid, it.id)
                 Log.d(TAG, "request added")
                 }
             .addOnFailureListener {
@@ -134,20 +137,41 @@ class FirebaseRepository {
         return isSuccessful
     }
 
-    private fun addUserRequest(request: Request, uid : String, requestId : String) : MutableLiveData<Boolean>{
-        val isSuccessful = MutableLiveData<Boolean>()
-
+    fun addUserRequest(request: Request, uid : String, requestId : String) {
         val userRequest = UserRequest()
         userRequest.setRequest(request)
         userRequest.requestId = requestId
         db.collection("users")
             .document(uid)
             .update("requests", FieldValue.arrayUnion(userRequest))
-            .addOnSuccessListener { isSuccessful.value = true }
+            .addOnSuccessListener { }
             .addOnFailureListener { exception ->
                 Log.d(TAG, "error adding request", exception)
-                isSuccessful.value = false
             }
-        return isSuccessful
     }
+
+    fun getRequestsByLocation(locality: Locality) : MutableLiveData<List<Request>> {
+        val requests = MutableLiveData<List<Request>>()
+
+        val docRef = db.collection("requests")
+
+        val query = docRef.whereEqualTo("locality", locality)
+
+        query.addSnapshotListener { querySnapshot, e ->
+            if (e != null) {
+                Log.w(TAG, "Listen failed.", e)
+                return@addSnapshotListener
+            } else {
+                val reqList = MutableList(0) { Request() }
+                for (qs in querySnapshot!!) {
+                    val req = qs.toObject<Request>()
+                    reqList.add(req)
+                }
+                requests.value = reqList
+            }
+        }
+
+        return requests
+    }
+
 }

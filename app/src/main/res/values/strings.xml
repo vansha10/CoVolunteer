@@ -29,4 +29,5 @@
     <string name="write_your_request_here">Write your request here</string>
     <string name="enter_your_locality_area">Enter your locality / area:</string>
     <string name="responses">responses</string>
+    <string name="requests_in_your_area">Requests in your area:</string>
 </resources>

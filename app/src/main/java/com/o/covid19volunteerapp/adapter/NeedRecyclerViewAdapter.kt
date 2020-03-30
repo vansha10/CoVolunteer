@@ -31,19 +31,19 @@ class NeedRecyclerViewAdapter(private var list: MutableList<UserRequest>)
 
 class NeedViewHolder(inflater: LayoutInflater, parent: ViewGroup) :
     RecyclerView.ViewHolder(inflater.inflate(R.layout.need_list_item, parent, false)) {
-    private var localityTextView : TextView? = null
+    private var postalCodeTextView : TextView? = null
     private var requestTextView : TextView? = null
     private var countTextView : TextView? = null
 
 
     init {
-        localityTextView = itemView.findViewById(R.id.request_locality)
+        postalCodeTextView = itemView.findViewById(R.id.request_locality)
         requestTextView = itemView.findViewById(R.id.request_text)
         countTextView = itemView.findViewById(R.id.request_response_count)
     }
 
     fun bind(request: UserRequest) {
-        localityTextView?.text = request.locality
+        postalCodeTextView?.text = "${request.locality.postalCode}, ${request.locality.country}"
         requestTextView?.text = request.requestText
         countTextView?.text = request.responses.size.toString()
     }
