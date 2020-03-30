@@ -8,7 +8,7 @@ import com.o.covid19volunteerapp.R
 import com.o.covid19volunteerapp.model.Request
 import com.o.covid19volunteerapp.model.UserRequest
 
-class VolunteerRecyclerViewAdapter(private var list: MutableList<Request>)
+class VolunteerRecyclerViewAdapter(private var list: MutableList<Request>, val clickListener: (Request) -> Unit)
     : RecyclerView.Adapter<VolunteerViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VolunteerViewHolder {
@@ -19,6 +19,9 @@ class VolunteerRecyclerViewAdapter(private var list: MutableList<Request>)
     override fun onBindViewHolder(holder: VolunteerViewHolder, position: Int) {
         val request : Request = list[position]
         holder.bind(request)
+        holder.itemView.setOnClickListener {
+            clickListener(list[position])
+        }
     }
 
     override fun getItemCount(): Int = list.size

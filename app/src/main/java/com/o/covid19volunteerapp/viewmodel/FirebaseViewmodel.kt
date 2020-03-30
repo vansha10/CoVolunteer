@@ -7,6 +7,7 @@ import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.PhoneAuthProvider
 import com.o.covid19volunteerapp.model.Locality
 import com.o.covid19volunteerapp.model.Request
+import com.o.covid19volunteerapp.model.Response
 import com.o.covid19volunteerapp.model.User
 import com.o.covid19volunteerapp.repository.FirebaseRepository
 
@@ -44,5 +45,8 @@ class FirebaseViewmodel : ViewModel() {
 
     fun getRequestsByLocation(locality: Locality) : MutableLiveData<List<Request>> {
         return firebaseRepository!!.getRequestsByLocation(locality)
+    }
+    fun addResponse(response: Response, uid: String, request: Request) : MutableLiveData<Boolean> {
+        return firebaseRepository!!.addResponse(response, uid, request)
     }
 }

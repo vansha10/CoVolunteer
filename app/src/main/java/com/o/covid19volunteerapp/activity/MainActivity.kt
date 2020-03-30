@@ -36,6 +36,7 @@ import kotlinx.android.synthetic.main.activity_main_need.*
 import kotlinx.android.synthetic.main.activity_main_need.recycler_view
 import kotlinx.android.synthetic.main.activity_main_need.toolbar
 import kotlinx.android.synthetic.main.activity_main_volunteer.*
+import java.lang.NullPointerException
 import java.util.*
 
 
@@ -86,6 +87,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setupVolunteerUI() {
+        showProgress()
         getUserLocation()
     }
 
@@ -125,12 +127,19 @@ class MainActivity : AppCompatActivity() {
 
     private fun updateVolunteerUI(requests : List<Request>) {
         requestsList = requests as MutableList<Request>
-        volunteerRecyclerViewAdapter = VolunteerRecyclerViewAdapter(requestsList!!)
+        volunteerRecyclerViewAdapter = VolunteerRecyclerViewAdapter(requestsList!!) {request ->
+            val intent = Intent(this, RequestInfoActivity::class.java)
+            val gson = Gson()
+            intent.putExtra("request", gson.toJson(request))
+            intent.putExtra("user", gson.toJson(user))
+            startActivity(intent)
+        }
 
         recycler_view.apply {
             layoutManager = LinearLayoutManager(context)
             adapter = volunteerRecyclerViewAdapter
         }
+        hideProgress()
     }
 
     private fun getLocationPermission() {
@@ -226,7 +235,8 @@ class MainActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
-        listenUserDataChange()
+        if (!user!!.isVolunteer)
+            listenUserDataChange()
     }
 
     private fun listenUserDataChange() {

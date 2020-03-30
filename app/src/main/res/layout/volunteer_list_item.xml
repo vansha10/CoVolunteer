@@ -25,7 +25,9 @@
             android:id="@+id/request_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:ellipsize="end"
             android:fontFamily="sans-serif-condensed"
+            android:maxLines="1"
             android:textColor="@color/black"
             android:textSize="20sp"
             tools:text="Text" />

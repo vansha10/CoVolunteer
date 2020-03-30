@@ -30,4 +30,7 @@
     <string name="enter_your_locality_area">Enter your locality / area:</string>
     <string name="responses">responses</string>
     <string name="requests_in_your_area">Requests in your area:</string>
+    <string name="title_activity_request_info">CoVolunteer</string>
+    <string name="volunteer_for_help">Volunteer For Help</string>
+    <string name="your_phone_number_will_be_shared">(Your name and phone number will be shared)</string>
 </resources>

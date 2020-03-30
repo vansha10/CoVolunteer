@@ -4,16 +4,14 @@ import android.app.Activity
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.google.firebase.auth.*
+import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.ktx.Firebase
-import com.o.covid19volunteerapp.model.Locality
-import com.o.covid19volunteerapp.model.Request
-import com.o.covid19volunteerapp.model.User
-import com.o.covid19volunteerapp.model.UserRequest
+import com.o.covid19volunteerapp.model.*
 import java.util.concurrent.TimeUnit
 
 class FirebaseRepository {
@@ -127,6 +125,9 @@ class FirebaseRepository {
             .add(request)
             .addOnSuccessListener {
                 isSuccessful.value = true
+                db.collection("requests")
+                    .document(it.id)
+                    .update("id", it.id)
                 addUserRequest(request, uid, it.id)
                 Log.d(TAG, "request added")
                 }
@@ -174,4 +175,39 @@ class FirebaseRepository {
         return requests
     }
 
+    fun addResponse(response: Response, uid: String, request: Request):  MutableLiveData<Boolean> {
+        val isSuccessful = MutableLiveData<Boolean>()
+        val userRequest = UserRequest()
+        userRequest.setRequest(request)
+        userRequest.responses.add(response)
+
+        db.collection("users")
+            .document(uid)
+            .get()
+            .addOnSuccessListener { documentSnapshot ->
+                if (documentSnapshot != null) {
+                    val user = documentSnapshot.toObject<User>()
+                    val newRequests = MutableList(0) { UserRequest() }
+                    for (req in user!!.requests) {
+                        if (req.requestId == request.id) {
+                            req.responses.add(response)
+                        }
+                        newRequests.add(req)
+                    }
+                    db.collection("users")
+                        .document(uid)
+                        .update("requests", newRequests)
+                        .addOnSuccessListener {
+                            isSuccessful.value = true
+                            Log.d(TAG, "response added")
+                        }
+                        .addOnFailureListener {
+                            isSuccessful.value = false
+                            Log.d(TAG, "error adding response", it)
+                        }
+                }
+            }
+            .addOnFailureListener { isSuccessful.value = false }
+        return isSuccessful
+    }
 }
