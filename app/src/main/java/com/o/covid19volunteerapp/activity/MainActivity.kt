@@ -36,6 +36,7 @@ import kotlinx.android.synthetic.main.activity_main_need.*
 import kotlinx.android.synthetic.main.activity_main_need.recycler_view
 import kotlinx.android.synthetic.main.activity_main_need.toolbar
 import kotlinx.android.synthetic.main.activity_main_volunteer.*
+import kotlinx.android.synthetic.main.content_add_request.*
 import java.lang.NullPointerException
 import java.util.*
 
@@ -173,7 +174,12 @@ class MainActivity : AppCompatActivity() {
 
     private fun updateNeedUI() {
         userRequestsList = user!!.requests as MutableList<UserRequest>
-        needRecyclerViewAdapter = NeedRecyclerViewAdapter(userRequestsList!!)
+        needRecyclerViewAdapter = NeedRecyclerViewAdapter(userRequestsList!!) {userRequest ->
+            val intent = Intent(this, UserRequestInfoActivity::class.java)
+            val gson = Gson()
+            intent.putExtra("userRequest", gson.toJson(userRequest))
+            startActivity(intent)
+        }
         recycler_view.apply {
             layoutManager = LinearLayoutManager(context)
             adapter = needRecyclerViewAdapter

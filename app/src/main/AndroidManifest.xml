@@ -13,6 +13,15 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
+            android:name=".activity.UserRequestInfoActivity"
+            android:label="@string/title_activity_user_request_info"
+            android:parentActivityName=".activity.MainActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.o.covid19volunteerapp.activity.MainActivity" />
+        </activity>
+        <activity
             android:name=".activity.RequestInfoActivity"
             android:label="@string/title_activity_request_info"
             android:parentActivityName=".activity.MainActivity"

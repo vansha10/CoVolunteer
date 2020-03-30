@@ -7,7 +7,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.o.covid19volunteerapp.R
 import com.o.covid19volunteerapp.model.UserRequest
 
-class NeedRecyclerViewAdapter(private var list: MutableList<UserRequest>)
+class NeedRecyclerViewAdapter(private var list: MutableList<UserRequest>,  val clickListener: (UserRequest) -> Unit)
     : RecyclerView.Adapter<NeedViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NeedViewHolder {
@@ -18,6 +18,9 @@ class NeedRecyclerViewAdapter(private var list: MutableList<UserRequest>)
     override fun onBindViewHolder(holder: NeedViewHolder, position: Int) {
         val request : UserRequest = list[position]
         holder.bind(request)
+        holder.itemView.setOnClickListener {
+            clickListener(list[position])
+        }
     }
 
     override fun getItemCount(): Int = list.size
