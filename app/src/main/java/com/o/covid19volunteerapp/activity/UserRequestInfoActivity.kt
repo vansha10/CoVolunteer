@@ -46,9 +46,9 @@ class UserRequestInfoActivity : AppCompatActivity() {
 
         responseList = userRequest.responses
         recyclerViewAdapter = ResponseRecyclerViewAdapter(responseList) {response ->
-            //showDialog(response)
-            val intent = Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + response.phoneNumber))
-            startActivity(intent)
+            showDialog(response)
+            //val intent = Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + response.phoneNumber))
+            //startActivity(intent)
         }
         recycler_view.apply {
             layoutManager = LinearLayoutManager(context)
@@ -77,6 +77,8 @@ class UserRequestInfoActivity : AppCompatActivity() {
             )
                 .setTitle("Call a volunteer")
             builder.create()
+            val alertDialog: AlertDialog = builder.create()
+            alertDialog.show()
         }
     }
 

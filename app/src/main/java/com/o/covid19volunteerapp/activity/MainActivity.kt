@@ -274,6 +274,8 @@ class MainActivity : AppCompatActivity() {
             )
                 .setTitle("Location Permission")
             builder.create()
+            val alertDialog: AlertDialog = builder.create()
+            alertDialog.show()
         }
     }
 }
