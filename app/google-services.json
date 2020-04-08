@@ -6,6 +6,7 @@
     "storage_bucket": "covid-19-volunteer-app.appspot.com"
   },
   "client": [
+
     {
       "client_info": {
         "mobilesdk_app_id": "1:941965581307:android:5b1bd240ed45227bbd095e",
@@ -21,7 +22,7 @@
       ],
       "api_key": [
         {
-          "current_key": "YOUR_API_KEY"
+          "current_key": "AIzaSyCjZrUVmvb7Di9DCUpyO8dxO1XoUJOgIV4"
         }
       ],
       "services": {
